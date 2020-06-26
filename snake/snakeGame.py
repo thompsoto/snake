@@ -1,5 +1,6 @@
 import random
 import pygame
+import time
 from pygame import mixer
 from copy import deepcopy
 
@@ -198,6 +199,31 @@ class Snake(object):
             pygame.draw.rect(window, square.color, (square.posX, square.posY, square.width, square.height))
 
 
+class Button:
+    def __init__(self, x, y, width, height, text):
+        self.color = (107, 199, 107)
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.text = text
+
+    def draw(self, window):
+        pygame.draw.rect(window, (255, 255, 255), (self.x - 3, self.y - 3, self.width + 6, self.height + 6), 0)
+        pygame.draw.rect(window, self.color, (self.x, self.y, self.width, self.height), 0)
+        font = pygame.font.Font("8-bit-pusab.ttf", 20)
+        buttonText = font.render(self.text, False, (255, 255, 255))
+        window.blit(buttonText, (self.x + (self.width / 2 - buttonText.get_width() / 2),
+                                 self.y + (self.height / 2 - buttonText.get_height() / 2)))
+
+    def hover(self, pos):
+        if self.x < pos[0] < self.x + self.width:
+            if self.y < pos[1] < self.y + self.height:
+                return True
+
+        return False
+
+
 def redraw(window, snake, snack, score):
     """
     Function to redraw the window after every movement.
@@ -265,7 +291,138 @@ def drawSnack(window, snack, snackColor):
     pygame.draw.rect(window, snackColor, (snack.posX, snack.posY, 20, 20))
 
 
-def gameOver(window, score):
+def snakeHit(snake):
+    """
+    Function that checks if Snake's head has collided with one of its body parts, or if it goes backwards onto itself
+
+    :param snake: The snake on the board
+    :return: True if Snake has collided, False otherwise
+    """
+    for index, square in enumerate(snake.body):
+        if index == 0:  # Skips over the head
+            continue
+        elif snake.head.posX == square.posX and snake.head.posY == square.posY:  # Compares the head to the body part
+            return True
+
+    return False
+
+
+def mainMenu():
+    pygame.init()  # Initializes pygame
+    window = pygame.display.set_mode((600, 600))  # Creates initial window
+    pygame.display.set_caption("Snake — by @thompmatt")  # Sets caption of window
+    easy = Button(200, 250, 200, 75, "Easy")
+    normal = Button(200, 350, 200, 75, "Normal")
+    hard = Button(200, 450, 200, 75, "Hard")
+
+    run = True
+
+    while run:
+        # If user hits the "X" quit button, closes application
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if easy.hover(mousePos):
+                    diff = 125
+                    run = False
+                elif normal.hover(mousePos):
+                    diff = 100
+                    run = False
+                elif hard.hover(mousePos):
+                    diff = 75
+                    run = False
+
+        window.fill((47, 48, 47))  # Fills background with a GRAY color
+        font = pygame.font.Font("8-bit-pusab.ttf", 60)  # Font used to display score
+        font2 = pygame.font.Font("8-bit-pusab.ttf", 16)  # Font used to display score
+        titleText = font.render("Snake", True, (255, 255, 255))  # Renders score text
+        author = font2.render("by @THOMPMATT", False, (255, 255, 255))
+        window.blit(titleText, (110, 65))  # Blit's text to window
+        window.blit(author, (275, 165))
+
+        easy.draw(window)
+        normal.draw(window)
+        hard.draw(window)
+
+        mousePos = pygame.mouse.get_pos()
+
+        if pygame.MOUSEMOTION:
+            if easy.hover(mousePos):
+                easy.color = (124, 230, 124)
+            elif normal.hover(mousePos):
+                normal.color = (124, 230, 124)
+            elif hard.hover(mousePos):
+                hard.color = (124, 230, 124)
+            else:
+                easy.color = (107, 199, 107)
+                normal.color = (107, 199, 107)
+                hard.color = (107, 199, 107)
+
+        pygame.display.update()
+
+    main(window, diff)
+
+
+def main(window, diff):
+    """
+    Main loop of the Snake game.
+
+    :param window: Window to be drawn on.
+    """
+
+    snake = Snake()  # Creates the Snake object
+    snackColor = (111, 201, 129)  # Color of snack (GREEN)
+    snackPos = newSnack()  # Generates coordinates for possible snack
+
+    # Continuously checks if snack has same coordinates as the head. If so, it regenerates a new snack.
+    while not goodSnackPos(snake, snackPos[0], snackPos[1]):
+        snackPos = newSnack()
+
+    snack = Square(snackPos[0], snackPos[1], snackColor)  # Creates snack
+
+    score = 0
+    velX = 20  # Initial X velocity, used for continuous movement
+    velY = 0  # Initial Y velocity, used for continuous movement
+    run = True
+    redraw(window, snake, snack, score)
+
+    # Main loop
+    while run:
+        pygame.time.delay(diff)  # Delay between loops, slows game down
+
+        # If user hits the "X" quit button, closes application
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+        velX, velY, secondSquare = snake.move(velX, velY)  # Calls the snake.move()
+
+        if secondSquare or snakeHit(snake):  # Checks if a Snake has collided with itself
+            mixer.music.load("thud.mp3")  # Hit itself sound effect
+            mixer.music.play()
+            run = False
+
+        if snake.head.posX == snack.posX and snake.head.posY == snack.posY:  # If the snake's head collides with a snack
+            snake.addSquare()  # Adds a square to the snake
+            score += 1  # Adds 1 to score
+            snackPos = newSnack()  # Creates new snack coordinates
+
+            # Checks whether coordinates are not on snake
+            while not goodSnackPos(snake, snackPos[0], snackPos[1]):
+                snackPos = newSnack()
+
+            snack = Square(snackPos[0], snackPos[1], snackColor)  # Adds snack to the window
+
+        redraw(window, snake, snack, score)  # Redraws window
+
+    gameOver(window, score, diff)
+
+
+def gameOver(window, score, diff):
     run = True
 
     while run:
@@ -301,82 +458,7 @@ def gameOver(window, score):
 
         pygame.display.update()
 
-    main()
+    main(window, diff)
 
 
-def snakeHit(snake):
-    """
-    Function that checks if Snake's head has collided with one of its body parts, or if it goes backwards onto itself
-
-    :param snake: The snake on the board
-    :return: True if Snake has collided, False otherwise
-    """
-    for index, square in enumerate(snake.body):
-        if index == 0:  # Skips over the head
-            continue
-        elif snake.head.posX == square.posX and snake.head.posY == square.posY:  # Compares the head to the body part
-            return True
-
-    return False
-
-
-def main():
-    """
-    Main loop of the Snake game.
-
-    @author Matt Thompson
-    """
-    pygame.init()  # Initializes pygame
-    window = pygame.display.set_mode((600, 600))  # Creates initial window
-    pygame.display.set_caption("Snake -- by @thompmatt")  # Sets caption of window
-
-    snake = Snake()  # Creates the Snake object
-    snackColor = (111, 201, 129)  # Color of snack (GREEN)
-    snackPos = newSnack()  # Generates coordinates for possible snack
-
-    # Continuously checks if snack has same coordinates as the head. If so, it regenerates a new snack.
-    while not goodSnackPos(snake, snackPos[0], snackPos[1]):
-        snackPos = newSnack()
-
-    snack = Square(snackPos[0], snackPos[1], snackColor)  # Creates snack
-
-    score = 0
-    velX = 20  # Initial X velocity, used for continuous movement
-    velY = 0  # Initial Y velocity, used for continuous movement
-    run = True
-    redraw(window, snake, snack, score)
-
-    # Main loop
-    while run:
-        pygame.time.delay(100)  # Delay between loops, slows game down
-
-        # If user hits the "X" quit button, closes application
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-
-        velX, velY, secondSquare = snake.move(velX, velY)  # Calls the snake.move()
-
-        if secondSquare or snakeHit(snake):  # Checks if a Snake has collided with itself
-            mixer.music.load("thud.mp3")  # Hit itself sound effect
-            mixer.music.play()
-            run = False
-
-        if snake.head.posX == snack.posX and snake.head.posY == snack.posY:  # If the snake's head collides with a snack
-            snake.addSquare()  # Adds a square to the snake
-            score += 1  # Adds 1 to score
-            snackPos = newSnack()  # Creates new snack coordinates
-
-            # Checks whether coordinates are not on snake
-            while not goodSnackPos(snake, snackPos[0], snackPos[1]):
-                snackPos = newSnack()
-
-            snack = Square(snackPos[0], snackPos[1], snackColor)  # Adds snack to the window
-
-        redraw(window, snake, snack, score)  # Redraws window
-
-    gameOver(window, score)
-
-
-main()
+mainMenu()
