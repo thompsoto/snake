@@ -1,6 +1,5 @@
 import random
 import pygame
-import time
 from pygame import mixer
 from copy import deepcopy
 
@@ -80,10 +79,8 @@ class Snake(object):
         """
         keys = pygame.key.get_pressed()  # Reads if a key has been pressed
         flag = False  # Flag to check if a Snake of len 2 has backed into its tail
-
         lastX = self.body[-1].posX  # Initial X position of tail
         lastY = self.body[-1].posY  # Initial Y position of tail
-
         self.reorganize()  # Reorganizes the whole snake, leaving only the head to be changed
 
         if keys[pygame.K_w] or keys[pygame.K_UP]:  # If the "W" or "UP" key is pressed, changes the head's direction
@@ -164,7 +161,6 @@ class Snake(object):
         mixer.music.load("eating.mp3")  # Eating sound
         mixer.music.set_volume(0.05)  # Reduces eating sound volume
         mixer.music.play()  # Plays eating sound
-
         tail = self.body[-1]  # Tail of the current snake
 
         if tail.dirDown == 1:  # If the tail's direction is facing down, adds a new Square above the current tail
@@ -200,7 +196,19 @@ class Snake(object):
 
 
 class Button:
+    """
+    Button class that creates the buttons for various seen in different screens, i.e. main menu
+    """
     def __init__(self, x, y, width, height, text):
+        """
+        Parameterized constructor for a button.
+
+        :param x: X-coordinate location for the button
+        :param y: Y-coordinate location for the button
+        :param width: The width of the button
+        :param height: The height of the button
+        :param text: Text (if any) to be written onto button
+        """
         self.color = (107, 199, 107)
         self.x = x
         self.y = y
@@ -209,7 +217,12 @@ class Button:
         self.text = text
 
     def draw(self, window):
-        pygame.draw.rect(window, (255, 255, 255), (self.x - 3, self.y - 3, self.width + 6, self.height + 6), 0)
+        """
+        Draw function for Button.
+
+        :param window: Window to draw the button onto
+        """
+        pygame.draw.rect(window, (25, 79, 41), (self.x - 3, self.y - 3, self.width + 6, self.height + 6), 0)
         pygame.draw.rect(window, self.color, (self.x, self.y, self.width, self.height), 0)
         font = pygame.font.Font("8-bit-pusab.ttf", 20)
         buttonText = font.render(self.text, False, (255, 255, 255))
@@ -217,6 +230,12 @@ class Button:
                                  self.y + (self.height / 2 - buttonText.get_height() / 2)))
 
     def hover(self, pos):
+        """
+        Checks if the mouse position is above the button.
+
+        :param pos: Position of mouse
+        :return: True if mouse is on button, False otherwise
+        """
         if self.x < pos[0] < self.x + self.width:
             if self.y < pos[1] < self.y + self.height:
                 return True
@@ -273,7 +292,6 @@ def newSnack():
     """
     posX = random.randint(1, 28)  # Generates a number for posX (Not including borders)
     posY = random.randint(1, 28)  # Generates a number for posY (Not including borders)
-
     posX = posX * 20  # Multiplies X by the width of a cube
     posY = posY * 20  # Multiplies Y by the height of a cube
 
@@ -307,13 +325,173 @@ def snakeHit(snake):
     return False
 
 
+def helpWindow(window):
+    """
+    helpWindow displays a new window that contains the controls, instructions, and objective for players to see.
+    :param window:
+    :return:
+    """
+    run = True
+    font = pygame.font.Font("8-bit-pusab.ttf", 18)  # Font used to display score
+    controls = font.render("To move the snake, use \"WASD\"", True, (255, 255, 255))
+    controls2 = font.render("or the arrow keys!", True, (255, 255, 255))
+    objective = font.render("Eat food and the snake will grow...", True, (255, 255, 255))
+    objective2 = font.render("but do not eat yourself!", True, (255, 255, 255))
+    back = Button(150, 400, 300, 75, "Back to Menu")
+
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if back.hover(mousePos):
+                    run = False
+
+        mousePos = pygame.mouse.get_pos()
+        window.fill((47, 48, 47))  # Fills background with a GRAY color
+        window.blit(controls, (60, 150))
+        window.blit(controls2, (150, 190))
+        window.blit(objective, (30, 270))
+        window.blit(objective2, (120, 310))
+        back.draw(window)
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_SPACE]:
+            run = False
+
+        if pygame.MOUSEMOTION:
+            if back.hover(mousePos):
+                back.color = (124, 230, 124)
+            else:
+                back.color = (107, 199, 107)
+
+        pygame.display.update()
+
+    mainMenu()
+
+
+def highScoreWin(window):
+    """
+    Window in which the user's high scores are displayed.
+    :param window:
+    :return:
+    """
+    run = True
+    back = Button(150, 462, 300, 75, "Back to Menu")
+    resetEasy = Button(400, 200, 40, 40, "")  # Button to reset Easy mode
+    resetNormal = Button(400, 275, 40, 40, "")  # Button to reset Normal mode
+    resetHard = Button(400, 350, 40, 40, "")  # Button to reset Hard mode
+    titleFont = pygame.font.Font("8-bit-pusab.ttf", 36)
+    font = pygame.font.Font("8-bit-pusab.ttf", 24)
+    resetFont = pygame.font.Font("8-bit-pusab.ttf", 14)
+    HSTitle = titleFont.render("High Scores:", True, (255, 255, 255))
+    resetText = resetFont.render("Reset", True, (255, 255, 255))
+    resetIcon = pygame.image.load("resetIcon.png")
+    resetIcon = pygame.transform.scale(resetIcon, (35, 35))
+
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if back.hover(mousePos):
+                    run = False
+                elif resetEasy.hover(mousePos):
+                    file = open("highscores.txt")
+                    lines = file.readlines()
+                    lines[0] = "0\n"
+                    file = open("highscores.txt", "w")
+                    file.writelines(lines)
+                    file.close()
+                elif resetNormal.hover(mousePos):
+                    file = open("highscores.txt")
+                    lines = file.readlines()
+                    lines[1] = "0\n"
+                    file = open("highscores.txt", "w")
+                    file.writelines(lines)
+                    file.close()
+                elif resetHard.hover(mousePos):
+                    file = open("highscores.txt")
+                    lines = file.readlines()
+                    lines[2] = "0"
+                    file = open("highscores.txt", "w")
+                    file.writelines(lines)
+                    file.close()
+
+        window.fill((47, 48, 47))
+        HSFile = open("highscores.txt")
+        lines = HSFile.readlines()
+        HSFile.close()
+        easy = font.render("Easy: " + lines[0].strip(), True, (255, 255, 255))
+        normal = font.render("Normal: " + lines[1].strip(), True, (255, 255, 255))
+        hard = font.render("Hard: " + lines[2].strip(), True, (255, 255, 255))
+        mousePos = pygame.mouse.get_pos()
+        keys = pygame.key.get_pressed()
+        back.draw(window)
+        resetEasy.draw(window)
+        resetNormal.draw(window)
+        resetHard.draw(window)
+        window.blit(HSTitle, (100, 75))
+        window.blit(easy, (130, 200))
+        window.blit(normal, (130, 275))
+        window.blit(hard, (130, 350))
+        window.blit(resetText, (385, 165))
+        window.blit(resetIcon, (402, 202))
+        window.blit(resetIcon, (402, 277))
+        window.blit(resetIcon, (402, 352))
+
+        if keys[pygame.K_SPACE]:
+            run = False
+
+        if pygame.MOUSEMOTION:
+            if back.hover(mousePos):
+                back.color = (124, 230, 124)
+            elif resetEasy.hover(mousePos):
+                resetEasy.color = (124, 230, 124)
+            elif resetNormal.hover(mousePos):
+                resetNormal.color = (124, 230, 124)
+            elif resetHard.hover(mousePos):
+                resetHard.color = (124, 230, 124)
+            else:
+                back.color = (107, 199, 107)
+                resetEasy.color = (107, 199, 107)
+                resetNormal.color = (107, 199, 107)
+                resetHard.color = (107, 199, 107)
+
+        pygame.display.update()
+
+    mainMenu()
+
+
 def mainMenu():
-    pygame.init()  # Initializes pygame
+    """
+    Main menu window.
+    :return:
+    """
+    pygame.init()  # Initializes Pygame
     window = pygame.display.set_mode((600, 600))  # Creates initial window
     pygame.display.set_caption("Snake — by @thompmatt")  # Sets caption of window
+    icon = pygame.image.load("snakeicon.png")
+    pygame.display.set_icon(icon)
     easy = Button(200, 250, 200, 75, "Easy")
-    normal = Button(200, 350, 200, 75, "Normal")
-    hard = Button(200, 450, 200, 75, "Hard")
+    normal = Button(200, 362.5, 200, 75, "Normal")
+    hard = Button(200, 475, 200, 75, "Hard")
+    helpButton = Button(540, 20, 40, 40, "")
+    hsButton = Button(485, 20, 40, 40, "")
+    helpCalled = False
+    hsCalled = False
+
+    # Reads High Scores
+    HSFile = open("highscores.txt", "r+")
+    HSFileLines = HSFile.readlines()
+    highScores = []
+
+    for i in range(0, 3):
+        highScores.append(HSFileLines[i])
+
+    HSFile.close()
 
     run = True
 
@@ -327,12 +505,21 @@ def mainMenu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if easy.hover(mousePos):
                     diff = 125
+                    high = highScores[0]
                     run = False
                 elif normal.hover(mousePos):
                     diff = 100
+                    high = highScores[1]
                     run = False
                 elif hard.hover(mousePos):
                     diff = 75
+                    high = highScores[2]
+                    run = False
+                elif helpButton.hover(mousePos):
+                    helpCalled = True
+                    run = False
+                elif hsButton.hover(mousePos):
+                    hsCalled = True
                     run = False
 
         window.fill((47, 48, 47))  # Fills background with a GRAY color
@@ -340,13 +527,19 @@ def mainMenu():
         font2 = pygame.font.Font("8-bit-pusab.ttf", 16)  # Font used to display score
         titleText = font.render("Snake", True, (255, 255, 255))  # Renders score text
         author = font2.render("by @THOMPMATT", False, (255, 255, 255))
-        window.blit(titleText, (110, 65))  # Blit's text to window
-        window.blit(author, (275, 165))
-
+        window.blit(titleText, (110, 80))  # Blit's text to window
+        window.blit(author, (275, 180))
         easy.draw(window)
         normal.draw(window)
         hard.draw(window)
-
+        helpButton.draw(window)
+        hsButton.draw(window)
+        qMark = pygame.image.load("qMark.png")
+        qMark = pygame.transform.scale(qMark, (32, 32))
+        trophy = pygame.image.load("trophy.png")
+        trophy = pygame.transform.scale(trophy, (35, 35))
+        window.blit(qMark, (543, 23))
+        window.blit(trophy, (487, 22))
         mousePos = pygame.mouse.get_pos()
 
         if pygame.MOUSEMOTION:
@@ -356,20 +549,32 @@ def mainMenu():
                 normal.color = (124, 230, 124)
             elif hard.hover(mousePos):
                 hard.color = (124, 230, 124)
+            elif helpButton.hover(mousePos):
+                helpButton.color = (124, 230, 124)
+            elif hsButton.hover(mousePos):
+                hsButton.color = (124, 230, 124)
             else:
                 easy.color = (107, 199, 107)
                 normal.color = (107, 199, 107)
                 hard.color = (107, 199, 107)
+                helpButton.color = (107, 199, 107)
+                hsButton.color = (107, 199, 107)
 
         pygame.display.update()
 
-    main(window, diff)
+    if helpCalled:
+        helpWindow(window)
+    elif hsCalled:
+        highScoreWin(window)
+    else:
+        main(window, diff, high)
 
 
-def main(window, diff):
+def main(window, diff, high):
     """
     Main loop of the Snake game.
 
+    :param diff:
     :param window: Window to be drawn on.
     """
 
@@ -419,31 +624,73 @@ def main(window, diff):
 
         redraw(window, snake, snack, score)  # Redraws window
 
-    gameOver(window, score, diff)
+    gameOver(window, score, diff, high)
 
 
-def gameOver(window, score, diff):
+def gameOver(window, score, diff, high):
+    high = int(high)
+    newHS = False
     run = True
+    menu = False
 
     while run:
-        # If user hits the "X" quit button, closes application
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if back.hover(mousePos):
+                    menu = True
+                    run = False
+
+        if score > high:
+            newHS = True
+            high = score  # Sets new score as the highest
+            HSFile = open("highscores.txt", "r")
+            lines = HSFile.readlines()
+
+            if diff == 125:
+                lines[0] = str(score) + "\n"  # Edits Easy high score
+            elif diff == 100:
+                lines[1] = str(score) + "\n"  # Edits Normal high score
+            elif diff == 75:
+                lines[2] = str(score)  # Edits Hard high score
+
+            HSFile = open("highscores.txt", "w")
+            HSFile.writelines(lines)
+            HSFile.close()
 
         window.fill((47, 48, 47))  # Fills background with a GRAY color
-
+        mousePos = pygame.mouse.get_pos()
         font = pygame.font.Font("8-bit-pusab.ttf", 40)  # Font used to display score
         font2 = pygame.font.Font("8-bit-pusab.ttf", 21)  # Font used to display score
         font3 = pygame.font.Font("8-bit-pusab.ttf", 18)  # Font used to display score
-
         gameOverText = font.render("Game Over", True, (255, 255, 255))  # Renders score text
         scoreText = font2.render("Score: " + str(score), True, (255, 255, 255))
-        restart = font3.render("Press \"SPACE\" to play again", True, (255, 255, 255))
+        back = Button(20, 20, 40, 40, "")
+        back.draw(window)
+        arrow = pygame.image.load("back.png")
+        arrow = pygame.transform.scale(arrow, (25, 25))
+        window.blit(arrow, (26, 27))
+        keys = pygame.key.get_pressed()
+        HSFile = open("highscores.txt")
+        lines = HSFile.readlines()
 
+        if diff == 125:
+            highScoreNum = lines[0].strip()
+            highScoreText = font2.render("High Score: " + highScoreNum, True, (255, 255, 255))
+        elif diff == 100:
+            highScoreNum = lines[1].strip()
+            highScoreText = font2.render("High Score: " + highScoreNum, True, (255, 255, 255))
+        elif diff == 75:
+            highScoreNum = lines[2].strip()
+            highScoreText = font2.render("High Score: " + highScoreNum, True, (255, 255, 255))
+
+        restart = font3.render("Press \"SPACE\" to play again", True, (255, 255, 255))
         window.blit(gameOverText, [120, 240])  # Blit's text to window
         window.blit(restart, [75, 500])
+
+        # Displays score to screen
         if score > 99:
             window.blit(scoreText, [205, 310])
         elif score > 9:
@@ -451,14 +698,33 @@ def gameOver(window, score, diff):
         else:
             window.blit(scoreText, [225, 310])
 
-        keys = pygame.key.get_pressed()
+        # Displays high score to screen
+        if int(highScoreNum) > 99:
+            window.blit(highScoreText, [150, 350])
+        elif int(highScoreNum) > 9:
+            window.blit(highScoreText, [160, 350])
+        else:
+            window.blit(highScoreText, [170, 350])
+
+        if newHS:
+            newHSText = font2.render("New High Score!", True, (255, 255, 255))
+            window.blit(newHSText, [150, 100])
 
         if keys[pygame.K_SPACE]:
             run = False
 
+        if pygame.MOUSEMOTION:
+            if back.hover(mousePos):
+                back.color = (124, 230, 124)
+            else:
+                back.color = (107, 199, 107)
+
         pygame.display.update()
 
-    main(window, diff)
+    if menu:
+        mainMenu()
+    else:
+        main(window, diff, high)
 
 
 mainMenu()
