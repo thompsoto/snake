@@ -158,7 +158,7 @@ class Snake(object):
         """
         Adds a Square to the tail of the snake.
         """
-        mixer.music.load("eating.mp3")  # Eating sound
+        mixer.music.load("data/eating.wav")  # Eating sound
         mixer.music.set_volume(0.05)  # Reduces eating sound volume
         mixer.music.play()  # Plays eating sound
         tail = self.body[-1]  # Tail of the current snake
@@ -199,6 +199,7 @@ class Button:
     """
     Button class that creates the buttons for various seen in different screens, i.e. main menu
     """
+
     def __init__(self, x, y, width, height, text):
         """
         Parameterized constructor for a button.
@@ -224,7 +225,7 @@ class Button:
         """
         pygame.draw.rect(window, (25, 79, 41), (self.x - 3, self.y - 3, self.width + 6, self.height + 6), 0)
         pygame.draw.rect(window, self.color, (self.x, self.y, self.width, self.height), 0)
-        font = pygame.font.Font("8-bit-pusab.ttf", 20)
+        font = pygame.font.Font("data/8-bit-pusab.ttf", 20)
         buttonText = font.render(self.text, False, (255, 255, 255))
         window.blit(buttonText, (self.x + (self.width / 2 - buttonText.get_width() / 2),
                                  self.y + (self.height / 2 - buttonText.get_height() / 2)))
@@ -253,7 +254,7 @@ def redraw(window, snake, snack, score):
     :param score: The current score
     """
     window.fill((47, 48, 47))  # Fills background with a GRAY color
-    font = pygame.font.Font("8-bit-pusab.ttf", 20)  # Font used to display score
+    font = pygame.font.Font("data/8-bit-pusab.ttf", 20)  # Font used to display score
     scoreText = font.render(str(score), True, (255, 255, 255))  # Renders score text
 
     if score > 99:
@@ -332,7 +333,7 @@ def helpWindow(window):
     :return:
     """
     run = True
-    font = pygame.font.Font("8-bit-pusab.ttf", 18)  # Font used to display score
+    font = pygame.font.Font("data/8-bit-pusab.ttf", 18)  # Font used to display score
     controls = font.render("To move the snake, use \"WASD\"", True, (255, 255, 255))
     controls2 = font.render("or the arrow keys!", True, (255, 255, 255))
     objective = font.render("Eat food and the snake will grow...", True, (255, 255, 255))
@@ -382,12 +383,12 @@ def highScoreWin(window):
     resetEasy = Button(400, 200, 40, 40, "")  # Button to reset Easy mode
     resetNormal = Button(400, 275, 40, 40, "")  # Button to reset Normal mode
     resetHard = Button(400, 350, 40, 40, "")  # Button to reset Hard mode
-    titleFont = pygame.font.Font("8-bit-pusab.ttf", 36)
-    font = pygame.font.Font("8-bit-pusab.ttf", 24)
-    resetFont = pygame.font.Font("8-bit-pusab.ttf", 14)
+    titleFont = pygame.font.Font("data/8-bit-pusab.ttf", 36)
+    font = pygame.font.Font("data/8-bit-pusab.ttf", 24)
+    resetFont = pygame.font.Font("data/8-bit-pusab.ttf", 14)
     HSTitle = titleFont.render("High Scores:", True, (255, 255, 255))
     resetText = resetFont.render("Reset", True, (255, 255, 255))
-    resetIcon = pygame.image.load("resetIcon.png")
+    resetIcon = pygame.image.load("data/resetIcon.png")
     resetIcon = pygame.transform.scale(resetIcon, (35, 35))
 
     while run:
@@ -399,29 +400,29 @@ def highScoreWin(window):
                 if back.hover(mousePos):
                     run = False
                 elif resetEasy.hover(mousePos):
-                    file = open("highscores.txt")
+                    file = open("data/highscores.txt")
                     lines = file.readlines()
                     lines[0] = "0\n"
-                    file = open("highscores.txt", "w")
+                    file = open("data/highscores.txt", "w")
                     file.writelines(lines)
                     file.close()
                 elif resetNormal.hover(mousePos):
-                    file = open("highscores.txt")
+                    file = open("data/highscores.txt")
                     lines = file.readlines()
                     lines[1] = "0\n"
-                    file = open("highscores.txt", "w")
+                    file = open("data/highscores.txt", "w")
                     file.writelines(lines)
                     file.close()
                 elif resetHard.hover(mousePos):
-                    file = open("highscores.txt")
+                    file = open("data/highscores.txt")
                     lines = file.readlines()
                     lines[2] = "0"
-                    file = open("highscores.txt", "w")
+                    file = open("data/highscores.txt", "w")
                     file.writelines(lines)
                     file.close()
 
         window.fill((47, 48, 47))
-        HSFile = open("highscores.txt")
+        HSFile = open("data/highscores.txt")
         lines = HSFile.readlines()
         HSFile.close()
         easy = font.render("Easy: " + lines[0].strip(), True, (255, 255, 255))
@@ -473,7 +474,8 @@ def mainMenu():
     pygame.init()  # Initializes Pygame
     window = pygame.display.set_mode((600, 600))  # Creates initial window
     pygame.display.set_caption("Snake — by @thompmatt")  # Sets caption of window
-    icon = pygame.image.load("snakeicon.png")
+    icon = pygame.image.load("data/snakeicon.png")
+    icon = pygame.transform.scale(icon, (32, 32))
     pygame.display.set_icon(icon)
     easy = Button(200, 250, 200, 75, "Easy")
     normal = Button(200, 362.5, 200, 75, "Normal")
@@ -484,7 +486,7 @@ def mainMenu():
     hsCalled = False
 
     # Reads High Scores
-    HSFile = open("highscores.txt", "r+")
+    HSFile = open("data/highscores.txt", "r+")
     HSFileLines = HSFile.readlines()
     highScores = []
 
@@ -523,8 +525,8 @@ def mainMenu():
                     run = False
 
         window.fill((47, 48, 47))  # Fills background with a GRAY color
-        font = pygame.font.Font("8-bit-pusab.ttf", 60)  # Font used to display score
-        font2 = pygame.font.Font("8-bit-pusab.ttf", 16)  # Font used to display score
+        font = pygame.font.Font("data/8-bit-pusab.ttf", 60)  # Font used to display score
+        font2 = pygame.font.Font("data/8-bit-pusab.ttf", 16)  # Font used to display score
         titleText = font.render("Snake", True, (255, 255, 255))  # Renders score text
         author = font2.render("by @THOMPMATT", False, (255, 255, 255))
         window.blit(titleText, (110, 80))  # Blit's text to window
@@ -534,9 +536,9 @@ def mainMenu():
         hard.draw(window)
         helpButton.draw(window)
         hsButton.draw(window)
-        qMark = pygame.image.load("qMark.png")
+        qMark = pygame.image.load("data/qMark.png")
         qMark = pygame.transform.scale(qMark, (32, 32))
-        trophy = pygame.image.load("trophy.png")
+        trophy = pygame.image.load("data/trophy.png")
         trophy = pygame.transform.scale(trophy, (35, 35))
         window.blit(qMark, (543, 23))
         window.blit(trophy, (487, 22))
@@ -607,7 +609,7 @@ def main(window, diff, high):
         velX, velY, secondSquare = snake.move(velX, velY)  # Calls the snake.move()
 
         if secondSquare or snakeHit(snake):  # Checks if a Snake has collided with itself
-            mixer.music.load("thud.mp3")  # Hit itself sound effect
+            mixer.music.load("data/thud.wav")  # Hit itself sound effect
             mixer.music.play()
             run = False
 
@@ -646,7 +648,7 @@ def gameOver(window, score, diff, high):
         if score > high:
             newHS = True
             high = score  # Sets new score as the highest
-            HSFile = open("highscores.txt", "r")
+            HSFile = open("data/highscores.txt", "r")
             lines = HSFile.readlines()
 
             if diff == 125:
@@ -656,24 +658,24 @@ def gameOver(window, score, diff, high):
             elif diff == 75:
                 lines[2] = str(score)  # Edits Hard high score
 
-            HSFile = open("highscores.txt", "w")
+            HSFile = open("data/highscores.txt", "w")
             HSFile.writelines(lines)
             HSFile.close()
 
         window.fill((47, 48, 47))  # Fills background with a GRAY color
         mousePos = pygame.mouse.get_pos()
-        font = pygame.font.Font("8-bit-pusab.ttf", 40)  # Font used to display score
-        font2 = pygame.font.Font("8-bit-pusab.ttf", 21)  # Font used to display score
-        font3 = pygame.font.Font("8-bit-pusab.ttf", 18)  # Font used to display score
+        font = pygame.font.Font("data/8-bit-pusab.ttf", 40)  # Font used to display score
+        font2 = pygame.font.Font("data/8-bit-pusab.ttf", 21)  # Font used to display score
+        font3 = pygame.font.Font("data/8-bit-pusab.ttf", 18)  # Font used to display score
         gameOverText = font.render("Game Over", True, (255, 255, 255))  # Renders score text
         scoreText = font2.render("Score: " + str(score), True, (255, 255, 255))
         back = Button(20, 20, 40, 40, "")
         back.draw(window)
-        arrow = pygame.image.load("back.png")
+        arrow = pygame.image.load("data/back.png")
         arrow = pygame.transform.scale(arrow, (25, 25))
         window.blit(arrow, (26, 27))
         keys = pygame.key.get_pressed()
-        HSFile = open("highscores.txt")
+        HSFile = open("data/highscores.txt")
         lines = HSFile.readlines()
 
         if diff == 125:
