@@ -24,4 +24,4 @@ To run the application, you can do one of two things:
 - To run, type "python snakeGame.py". (If "python" doesn't work, try "python3")
 
 ## Author
-**Matt Thompson** - *Snake*
+**Matt Thompson** (https://github.com/thompmatt) - *Snake* - 2020
