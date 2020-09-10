@@ -1,5 +1,8 @@
 # Snake
-![](images/snakeTitle.png)
+<p align="center">
+  <img src="images/snakeTitle" />
+</p>
+
 This program is my recreation of the classic **Snake** game. The program utilizes the Pygame module and Object-Oriented Programming (OOP). The snake is defined as a list of 'Squares,' which is one of the objects in the code. Game runs in a 600x600 window.
 
 ## Main Menu
