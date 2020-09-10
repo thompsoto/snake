@@ -1,5 +1,5 @@
 # Snake
-
+![](images/snakeTitle.png)
 This program is my recreation of the classic **Snake** game. The program utilizes the Pygame module and Object-Oriented Programming (OOP). The snake is defined as a list of 'Squares,' which is one of the objects in the code. Game runs in a 600x600 window.
 
 ## Main Menu
@@ -17,7 +17,7 @@ Furthermore, one can see two buttons in the top right corner of the screen:
 ## Downloading and Compiling
 
 To run the application, you can do one of two things:
-1. Navigate to the main [**Snake**](https://github.com/thompmatt/Snake) page. In the right side under "[Releases](https://github.com/thompmatt/Snake/releases/tag/1.0)", you can download the installer.
+1. Navigate to the main [**Snake**](https://github.com/thompmatt/Snake) page. In the right side under [Releases](https://github.com/thompmatt/Snake/releases/tag/1.0), you can download the installer.
 2. Download the 'snakeGame.py' file and:
 - Open CMD or Terminal. (Make sure Python and the Pygame module are installed)
 - Navigate towards the location of the file.
