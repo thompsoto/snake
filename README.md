@@ -3,7 +3,7 @@
   <img src="https://github.com/thompmatt/Snake/blob/master/images/snakeTitle.png" />
 </p>
 
-This program is my recreation of the classic **Snake** game. The program utilizes the Pygame module and Object-Oriented Programming (OOP). The snake is defined as a list of 'Squares,' which is one of the objects in the code. Game runs in a 600 x 600 window.
+This personal program is my recreation of the classic **Snake** game. The program utilizes the Pygame module and Object-Oriented Programming (OOP). The snake is defined as a list of 'Squares,' which is one of the objects in the code. Game runs in a 600 x 600 window.
 
 The objective of the game is to control a snake and eat food or snacks to grow! However, make sure while you are out hunting for food that you do not eat yourself! That would hurt...
 
@@ -13,7 +13,7 @@ This personal project allowed me to practice various things:
 - Basic video game design (Main menu, difficulties, help section, high scores, control and game flow)
 - File I/O in Python (Saving/reading scores)
 
-and much more! This was and is one of my favorite programming projects to make.
+and much more! This was one of my favorite programming projects to work on.
 
 ## Main Menu
 <p align="center">
