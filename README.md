@@ -7,6 +7,13 @@ This program is my recreation of the classic **Snake** game. The program utilize
 
 The objective of the game is to control a snake and eat food or snacks to grow! However, make sure while you are out hunting for food that you do not eat yourself! That would hurt...
 
+This personal project allowed me to practice various things:
+- Object-Oriented Programming in Python
+- User Interfaces (UI) in Python
+- Basic video game design (Main menu, difficulties, help section, high scores, control and game flow)
+- File I/O in Python (Saving/reading scores)
+and much more! This was and is one of my favorite programming projects to make.
+
 ## Main Menu
 <p align="center">
   <img src="https://github.com/thompmatt/Snake/blob/master/images/mainMenu.png" />
