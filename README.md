@@ -12,6 +12,7 @@ This personal project allowed me to practice various things:
 - User Interfaces (UI) in Python
 - Basic video game design (Main menu, difficulties, help section, high scores, control and game flow)
 - File I/O in Python (Saving/reading scores)
+- Packaging/creating an executable
 
 and much more! This was one of my favorite programming projects to work on.
 
