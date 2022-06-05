@@ -1,5 +1,5 @@
 # Snake by @thompsoto
-## Note: @thompmatt used to be my old username. 
+#### Note: @thompmatt used to be my old username. 
 <p align="center">
   <img src="https://github.com/thompmatt/Snake/blob/master/images/snakeTitle.png" />
 </p>
