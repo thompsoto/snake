@@ -2,8 +2,9 @@
 
 <p align="center">
   <img src="https://github.com/thompmatt/Snake/blob/master/images/snakeTitle.png" />
-  <text>Note: @thompmatt used to be my old username.</text>
 </p>
+
+<p align="center">Note: @thompmatt used to be my old username</p>
 
 This personal program is my recreation of the classic **Snake** game. The program utilizes the Pygame module and Object-Oriented Programming (OOP). The snake is defined as a list of 'Squares,' which is one of the objects in the code. Game runs in a 600 x 600 window.
 
